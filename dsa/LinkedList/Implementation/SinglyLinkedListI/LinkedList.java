@@ -1,4 +1,4 @@
-package LinkedList;
+package SinglyLinkedListI;
 
 public class LinkedList {
 	private int length = 0;
