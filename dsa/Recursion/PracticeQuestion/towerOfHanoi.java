@@ -4,17 +4,17 @@
 
 public class towerOfHanoi {
     public static void main(String[] args){
-        solveTowerOfHanoi(3,'A','B','C');
+        solveTowerOfHanoi(2,'A','B','C');
     }
 
-    static void solveTowerOfHanoi(int n, char A,char B,char C){
-        // A initial source tower
-        // B Auxiliary tower
-        // C destination tower
-        if(n>0){ // A to C
-            solveTowerOfHanoi(n-1, A, C, B); // A to B 
-            System.out.println("Move a disk from tower" + A + " to tower" + C); // A to C
-            solveTowerOfHanoi(n-1, B, A, C); // B to C
+    static void solveTowerOfHanoi(int n, char src,char aux,char des){
+        // src initial source tower
+        // aux Auxiliary tower
+        // des destination tower
+        if(n>0){ // src to des
+            solveTowerOfHanoi(n-1, src, des, aux); // src to aux 
+            System.out.println("Move a disk from tower-" + src + " to tower-" + des); // src to des
+            solveTowerOfHanoi(n-1, aux, src, des); // aux to des
         }
     }
 }
