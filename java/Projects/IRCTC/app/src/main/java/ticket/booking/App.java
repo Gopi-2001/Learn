@@ -3,9 +3,17 @@
  */
 package ticket.booking;
 
+import java.nio.file.FileSystems;
+
 public class App {
 
     public static void main(String[] args) {
 
+//        ClassLoader loader = App.class.getClassLoader();
+//        System.out.println(loader.getResource("ticket/booking/App.class"));
+
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        System.out.println("Hello ");
+        System.out.println(App.class.getResource("App.class"));
     }
 }
