@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ded3f57-6a8f-4766-b35f-ac8ca90b6007" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/localDb/trains.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/trains.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/localDb/user.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/user.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/services/UserBookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/services/UserBookingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../dsa/LinkedList/Implementation/SinglyLinkedListII/LinkedList.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../dsa/LinkedList/Implementation/SinglyLinkedListII/LinkedList.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,4 +1,4 @@
-package SinglyLinkedListI;
+package SinglyLinkedListII;
 
 public class SinglyLinkedList {
 	
@@ -71,6 +71,7 @@ public class SinglyLinkedList {
 				System.out.print(temp.data);
 				if(temp!=tail)	System.out.print("->");	
 			}
+			System.out.println();
 		}
 	}
 	
