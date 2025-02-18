@@ -6,7 +6,6 @@ class EmptyStackExpection extends Exception {
 	}
 }
 
-
 class ListNode {
 	protected int data;
 	protected ListNode next;
