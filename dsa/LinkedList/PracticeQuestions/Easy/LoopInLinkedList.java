@@ -1,5 +1,7 @@
 package Easy;
 
+// https://cp-algorithms.com/others/tortoise_and_hare.html
+
 import java.util.HashSet;
 
 public class LoopInLinkedList {
