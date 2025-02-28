@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ded3f57-6a8f-4766-b35f-ac8ca90b6007" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/users.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../dsa/LinkedList/PracticeQuestions/Easy/LoopInLinkedList.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../dsa/LinkedList/PracticeQuestions/Easy/LoopInLinkedList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/Ticket.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/Ticket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/Train.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/Train.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/entities/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/trains.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/trains.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/localDb/user.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/ticket/booking/services/UserBookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/ticket/booking/services/UserBookingService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,6 +21,29 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/app">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ticket-booking" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -35,10 +54,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2t948etDHGl9QIBxRnqTBAgr4JR" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -47,15 +66,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.IRCTC:app [:app:ticket.booking.App.main()].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.IRCTC:app [:app:ticket.booking.App.main()].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="ticket.booking.entities" />
