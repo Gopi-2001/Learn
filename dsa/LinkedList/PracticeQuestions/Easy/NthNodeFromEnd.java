@@ -37,6 +37,8 @@ class solution1 {
 	// if(count < n-1) return null and print "fewer number of nodes in the list"
 	// if(count > n-1) continue with the next node
 	
+	// Logic - Certainly count of element after nth node from end will be (n-1)
+	
 	public static Node FindNthNodeFromEnd(Node head,int n) {
 		Node curr = head;
 		//System.out.println("a");
