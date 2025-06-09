@@ -5,16 +5,11 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- bean definitions here -->
-    <bean id="specification" class="car.example.autowire.name.Specification">
+    <bean id="specification" class="car.example.autowire.constructor.Specification">
         <property name="make" value="Toyota"/>
         <property name="model" value="Corolla"/>
     </bean>
 
-    <bean id="specification1" class="car.example.autowire.name.Specification">
-        <property name="make" value="Toyota1"/>
-        <property name="model" value="Corolla1"/>
-    </bean>
-
-    <!-- Whatever dependencies car class need please autowire them by name -->
-    <bean id="myCar" class="car.example.autowire.name.Car" autowire="byName"/>
+    <!-- Whatever dependencies car class need please autowire them by type -->
+    <bean id="myCar" class="car.example.autowire.constructor.Car" autowire="constructor"/>
 </beans>

@@ -10,4 +10,13 @@ public class Car {
     public void displayDetails() {
         System.out.println("Car Details: " + specification.toString());
     }
+
+    private Specification specification1;
+
+    public void setSpecification1(Specification specification) {
+        this.specification1 = specification;
+    }
+    public void displayDetails1() {
+        System.out.println("Car Details1: " + specification1.toString());
+    }
 }
