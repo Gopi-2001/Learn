@@ -1,0 +1,18 @@
+package com.example.componentscan.annotation;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class App {
+    public static void main(String[] args){
+
+        // ApplicationContext is a interface and it has different implementation
+        // ClassPathXmlApplicationContext() is one of the implementation
+        // AnnotationConfigApplicationContext() is annotation based implementation
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        Employee employee = (Employee) context.getBean("employee");
+        System.out.println(employee.toString());
+
+    }
+}
