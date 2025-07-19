@@ -1,0 +1,32 @@
+-> Axios is a popular JavaScript library used to make HTTP requests from node.js or from the browser. 
+   It supports promises and provides a simple API for performing CRUD operations.
+
+-> To use Axios, first install it via npm: npm install axios
+
+Then, you can import and use it in your JavaScript code:
+
+const axios = require('axios');
+
+// GET request
+axios.get('https://api.example.com/data')
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+// POST request
+axios.post('https://api.example.com/data', { key: 'value' })
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
+=== Commands ===
+
+1. npm install axios bootstrap bootstrap-icons
+2. npm install react-router-dom
+3. 
