@@ -28,6 +28,7 @@ public class App {
             userBookingService = new UserBookingService();
         } catch (IOException e){
             System.out.println("There is Something wrong");
+            e.printStackTrace();
             return;
         }
 
@@ -113,6 +114,9 @@ public class App {
                     break;
 
                 case 6:
+                    Boolean isCancelled = userBookingService.cancelBooking();
+                    if(isCancelled.equals(true)) System.out.println("Your Booking is cancelled");
+                    else System.out.println("Failed to cancel your Booking");
                     break;
 
                 default:

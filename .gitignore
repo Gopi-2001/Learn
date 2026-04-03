@@ -1,0 +1,14 @@
+gate
+.idea/
+.vscode/
+node_modules/
+dist/
+build/
+.env
+.DS_Store
+*.log
+*.bak
+*.tmp
+*.swp
+*.swo
+*.swn

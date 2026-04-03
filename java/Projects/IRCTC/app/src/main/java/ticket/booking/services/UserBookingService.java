@@ -61,10 +61,10 @@ public class UserBookingService {
     }
 
     public void fetchBookings(){
-         Optional<User> foundUser = findUser();
-         if(foundUser.isPresent()){
-            foundUser.get().printTicket();
-        }
+             Optional<User> foundUser = findUser();
+             if (foundUser.isPresent()) {
+                 foundUser.get().printTicket();
+             }
     }
 
     public Boolean cancelBooking(){

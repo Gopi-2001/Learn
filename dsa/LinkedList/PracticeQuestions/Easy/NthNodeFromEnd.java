@@ -37,7 +37,7 @@ class solution1 {
 	// if(count < n-1) return null and print "fewer number of nodes in the list"
 	// if(count > n-1) continue with the next node
 	
-	// Logic - Certainly count of element after nth node from end will be (n-1)
+	// Logic - Certainly count of element after 'nth node from end' will be (n-1)
 	
 	public static Node FindNthNodeFromEnd(Node head,int n) {
 		Node curr = head;
@@ -121,7 +121,7 @@ class solution4 {
 	// Initially both point to head node
 	// let first node make n moves 
 	// now first node can make only 'length - n + 1' move
-	// 'length - n + 1' from stat == nth from end
+	// 'length - n + 1' from start == nth from end
 	// Now move second node along with first node
 	
 	public static Node FindNthNodeFromEnd(Node head,int n) { 
