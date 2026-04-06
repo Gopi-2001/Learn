@@ -13,10 +13,10 @@ public class Manager {
     // Spring will take a look at what this particular class needs i.e. employee.
     // It will automatically inject the bean of type employee
     // It is a constructor Injection
-//   @Autowired
-//   public Manager(Employee employee) {
-//        this.employee = employee;
-//   }
+    //   @Autowired
+    //   public Manager(Employee employee) {
+    //        this.employee = employee;
+    //   }
 
     @Override
     public String toString() {

@@ -1,5 +1,4 @@
 package com.tight.coupling;
-
 public class TightCouplingExample {
     // Entry Point for our application
 
