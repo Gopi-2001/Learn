@@ -40,6 +40,34 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--
+			Development Tool Dependencies
+			==============================
+			- Spring Boot DevTools: Enables automatic restart and live reload
+			
+			How to Use via Command Line:
+			=============================
+			DevTools triggers a restart when it detects changes in the 
+			compiled classpath (e.g., the target/classes folder), 
+			not just the source file you saved. Depending on how you are working, 
+			you may need an extra step
+
+			1. Command Line: If you are running mvn spring-boot:run in 
+			one terminal, you must run `mvn compile` in another terminal 
+			for the changes to be picked up and the application to restart.
+			
+			3. For Spring Boot DevTools to work with IDE:
+			- Enable "Build Project Automatically" in IDE settings
+			- The app restarts automatically when code changes are detected
+			
+			Note: DevTools dependencies should be marked as 'runtime' or 'optional'
+			to avoid including them in the final production build.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<build>
