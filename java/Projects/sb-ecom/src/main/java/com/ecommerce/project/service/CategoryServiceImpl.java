@@ -56,7 +56,9 @@ package com.ecommerce.project.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ecommerce.project.model.Category;
 
@@ -82,10 +84,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categories.stream()
             .filter(cat -> cat.getCategoryId().equals(id))
             .findFirst()
-            .get();
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with id: " + id));
 
         categories.remove(category);
-        return "Category with categoryId" + id + "deleted successfully !";
+        return "Category with categoryId " + id + " deleted successfully !";
     }
     
 }
