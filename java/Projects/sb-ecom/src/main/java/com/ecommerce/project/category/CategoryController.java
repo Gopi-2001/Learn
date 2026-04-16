@@ -20,6 +20,7 @@ import com.ecommerce.project.service.CategoryService;
 
 
 @RestController
+@RequestMapping("/api")
 public class CategoryController {
     
     CategoryService categoryService;
@@ -29,14 +30,14 @@ public class CategoryController {
     }
 
     //@GetMapping("/api/public/categories")
-    @RequestMapping(value = "/api/public/categories", method = RequestMethod.GET)
+    @RequestMapping(value = "/public/categories", method = RequestMethod.GET)
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     //@PostMapping("/api/admin/category")
-    @RequestMapping(value = "/api/admin/category", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/category", method = RequestMethod.POST)
     public String requestMethodName(@RequestParam String param) {
         return new String();
     }
@@ -46,7 +47,7 @@ public class CategoryController {
     return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/admin/category/{id}")
+    @DeleteMapping("/admin/category/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
         try {
         String status = categoryService.deleteCategory(id);
@@ -60,7 +61,7 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/api/public/categories/{categoryId}")
+    @PutMapping("/public/categories/{categoryId}")
     public ResponseEntity<String> updateCategory(@PathVariable Long categoryId, 
                                                  @RequestBody Category category) {
 
