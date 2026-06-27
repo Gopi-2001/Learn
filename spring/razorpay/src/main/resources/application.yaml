@@ -1,0 +1,24 @@
+# ==============================================================================
+# ENVIRONMENT VARIABLES & FALLBACK LOGIC
+# Syntax: ${VARIABLE_NAME:fallback_value}
+# If the environment variable exists on the system, Spring Boot injects it.
+# Otherwise, it falls back to the local default value provided after the colon.
+# ==============================================================================
+
+spring:
+  application:
+    name: razorpay
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/db-name}
+    username: ${DB_USER:user}   # Defaults to your single admin user 'postgres'
+    password: ${DB_PASSWORD:password}      # Leave blank or insert fallback if required
+
+  jpa:
+    show-sql: true                  # Prints SQL queries in your terminal console
+    properties:
+      hibernate:
+        format_sql: true            # Formats printed SQL to be human-readable
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # Deprecated, therefore PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect'
+    hibernate:
+      ddl-auto: update              # Automatically updates database schemas based on entity updates
