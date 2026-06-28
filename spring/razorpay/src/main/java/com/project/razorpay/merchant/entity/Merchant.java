@@ -13,10 +13,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "merchant")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Merchant {
 
     @Id
@@ -43,7 +39,7 @@ public class Merchant {
     private String websiteUrl;
 
     @Column(nullable = false, length = 50)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private MerchantStatus merchantStatus = MerchantStatus.PENDING_KYC;
 
     @Column(length = 20)

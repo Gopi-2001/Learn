@@ -1,6 +1,6 @@
-Here is a clean, bite-sized reference note that you can save for future use.
-------------------------------
-## 📝 Quick Notes: Installing PostgreSQL via Chocolatey on Windows## 1. Prerequisites
+## 📝 Quick Notes: Installing PostgreSQL via Chocolatey on Windows
+
+## 1. Prerequisites
 
 * Windows OS.
 * Chocolatey must be installed on your system. [1] 
@@ -12,31 +12,37 @@ Here is a clean, bite-sized reference note that you can save for future use.
 
 ## To install the latest stable version:
 
+```
 choco install postgresql --params "'/Password:YourStrongPasswordHere'"
+```
 
 ## To install a specific version (e.g., v16):
 
+```
 choco install postgresql16 --params "'/Password:YourStrongPasswordHere'"
+```
 
 ⚠️ Important: Replace YourStrongPasswordHere with your actual desired master password.
 
 ## 3. Key Installation Parameters
 You can customize your installation by appending these inside the single quotes:
 
-* /Port:5432 — Specifies the port (default is 5432).
-* /DataDir:'C:\pgdata' — Changes the location where your database files are physically stored. [3] 
+* `/Port:5432` — Specifies the port (default is 5432).
+* `/DataDir:'C:\pgdata'` — Changes the location where your database files are physically stored. [3] 
 
 ## 4. Verification & First Login
 Restart your terminal to refresh the environment path variables, then log in using the default master superuser account:
 
+```
 psql -U postgres
+```
 
 ## 5. Essential psql Shortcut Commands
 Once logged inside the postgres=# prompt:
 
-* \du — List all database users/roles.
-* \l — List all databases.
-* \q — Quit/exit the PostgreSQL prompt. [4, 5] 
+* `\du` — List all database users/roles.
+* `\l` — List all databases.
+* `\q` — Quit/exit the PostgreSQL prompt. [4, 5] 
 
 ------------------------------
 Would you like me to add a quick section on how to completely uninstall PostgreSQL using Chocolatey if you ever need a fresh start?
