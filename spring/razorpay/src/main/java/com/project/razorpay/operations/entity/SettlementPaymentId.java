@@ -7,9 +7,8 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-public class SettlementPaymentId implements Serializable {
+public class SettlementPaymentId {
 
-    @Column(columnDefinition = "uuid")
     private UUID settlementId;
 
     private UUID paymentId;
