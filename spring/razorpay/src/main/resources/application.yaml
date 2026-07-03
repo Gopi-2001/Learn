@@ -21,4 +21,4 @@ spring:
         format_sql: true            # Formats printed SQL to be human-readable
         dialect: org.hibernate.dialect.PostgreSQLDialect  # Deprecated, therefore PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect'
     hibernate:
-      ddl-auto: create              # Automatically updates database schemas based on entity updates
+      ddl-auto: update              # Automatically updates database schemas based on entity updates
