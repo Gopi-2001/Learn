@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse getById(UUID merchantId, UUID orderId) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMercantId(orderId,merchantId)
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
 
         return new OrderResponse(orderRecord.getId(),
@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponse cancel(UUID merchantId, UUID orderId) {
 
-        OrderRecord orderRecord = orderRepository.findByIdAndMercantId(orderId,merchantId)
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
 
         if(orderRecord.getOrderStatus().equals(OrderStatus.CANCELED) || orderRecord.getOrderStatus().equals(OrderStatus.PAID)) {
@@ -109,20 +109,12 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(orderRecord);
 
-        return new OrderResponse(orderRecord.getId(),
-                orderRecord.getMerchantId(),
-                orderRecord.getReceipt(),
-                orderRecord.getAmount(),
-                orderRecord.getOrderStatus(),
-                orderRecord.getAttempts(),
-                orderRecord.getNotes(),
-                orderRecord.getExpiresAt(),
-                null);
+        return orderMapper.toOrderResponse(orderRecord);
     }
 
     @Override
     public List<PaymentResponse> listPayment(UUID merchantId, UUID orderId) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMercantId(orderId,merchantId)
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
 
         List<Payment> paymentsList = paymentRepository.findByOrderId(orderId);
