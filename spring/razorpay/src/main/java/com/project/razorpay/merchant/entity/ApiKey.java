@@ -1,5 +1,6 @@
 package com.project.razorpay.merchant.entity;
 
+import com.project.razorpay.common.entity.BaseEntity;
 import com.project.razorpay.common.enums.Environment;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiKey {
+public class ApiKey extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,4 +50,6 @@ public class ApiKey {
     private LocalDateTime lastUsedAt;
     private LocalDateTime rotatedAt;
     private LocalDateTime gracePeriodExpiresAt;
+
+
 }
