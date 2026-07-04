@@ -2,6 +2,7 @@ package com.project.razorpay.payment.gateway;
 
 import com.project.razorpay.common.enums.PaymentMethod;
 import com.project.razorpay.payment.gateway.dto.PaymentRequest;
+import com.project.razorpay.payment.gateway.dto.PaymentResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ public class PaymentGatewayRouter {
 
     private final Map<PaymentMethod,PaymentAdapter> paymentAdapters;
 
-    public void initiate(PaymentRequest request){
+    public PaymentResult initiate(PaymentRequest request){
 
         PaymentAdapter adapter = paymentAdapters.get(request.method());
 
@@ -22,5 +23,7 @@ public class PaymentGatewayRouter {
         }
 
         adapter.initiate(request);
+
+        return null;
     }
 }
