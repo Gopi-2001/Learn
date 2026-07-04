@@ -13,3 +13,8 @@
 ## Record in Java
 
 1. Understanding Java Records — A Comprehensive Guide - [link](https://medium.com/@ksaquib/understanding-java-records-a-comprehensive-guide-448442d8cda9)
+
+## MapStruct
+
+1. Object Mapping in Java with MapStruct and example - [link](https://medium.com/@pvprasanth474/object-mapping-in-java-with-mapstruct-with-example-47b991ea7b0e)
+
