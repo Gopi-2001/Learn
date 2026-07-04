@@ -83,15 +83,7 @@ public class OrderServiceImpl implements OrderService {
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
 
-        return new OrderResponse(orderRecord.getId(),
-                orderRecord.getMerchantId(),
-                orderRecord.getReceipt(),
-                orderRecord.getAmount(),
-                orderRecord.getOrderStatus(),
-                orderRecord.getAttempts(),
-                orderRecord.getNotes(),
-                orderRecord.getExpiresAt(),
-                null);
+        return orderMapper.toOrderResponse(orderRecord);
     }
 
     @Override

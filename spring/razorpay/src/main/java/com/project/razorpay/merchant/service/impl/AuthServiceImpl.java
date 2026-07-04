@@ -7,6 +7,7 @@ import com.project.razorpay.merchant.dto.request.MerchantSignupRequest;
 import com.project.razorpay.merchant.dto.response.MerchantResponse;
 import com.project.razorpay.merchant.entity.AppUser;
 import com.project.razorpay.merchant.entity.Merchant;
+import com.project.razorpay.merchant.mapper.MerchantMapper;
 import com.project.razorpay.merchant.repository.AppUserRepository;
 import com.project.razorpay.merchant.repository.MerchantRepository;
 import com.project.razorpay.merchant.service.AuthService;
@@ -22,6 +23,8 @@ public class AuthServiceImpl implements AuthService {
     private final AppUserRepository appUserRepository;
     private final MerchantRepository merchantRepository;
 
+    private final MerchantMapper merchantMapper;
+
     @Override
     public MerchantResponse signup(MerchantSignupRequest request) {
 
@@ -31,13 +34,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
 
-        Merchant merchant = Merchant.builder()
-                .businessName(request.businessName())
-                .businessType(request.businessType())
-                .name(request.name())
-                .email(request.email())
-                .status(MerchantStatus.PENDING_KYC)
-                .build();
+        Merchant merchant = merchantMapper.toEntityFromMerchantSignUpRequest(request);
+        merchant.setStatus(MerchantStatus.PENDING_KYC);
 
         merchant =  merchantRepository.save(merchant);
 
@@ -50,8 +48,6 @@ public class AuthServiceImpl implements AuthService {
 
         appUserRepository.save(appUser);
 
-        return new MerchantResponse(merchant.getId(), merchant.getName(), merchant.getEmail(),
-                merchant.getBusinessName(),merchant.getBusinessType(),
-                merchant.getStatus());
+        return merchantMapper.toMerchantResponseFromMerchant(merchant);
     }
 }
