@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "settlement_payment")
-public class SettlementPayment {
+public class SettlementPayment extends BaseEntity {
 
     @EmbeddedId
     private  SettlementPaymentId id;
