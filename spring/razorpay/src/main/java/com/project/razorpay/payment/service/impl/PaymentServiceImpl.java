@@ -5,12 +5,11 @@ import com.project.razorpay.common.enums.PaymentStatus;
 import com.project.razorpay.common.exception.BusinessRuleValidationException;
 import com.project.razorpay.common.exception.ResourceNotFoundExecption;
 import com.project.razorpay.payment.dto.request.PaymentInitRequest;
-import com.project.razorpay.payment.dto.response.PaymentResponse;
 import com.project.razorpay.payment.entity.OrderRecord;
 import com.project.razorpay.payment.entity.Payment;
 import com.project.razorpay.payment.gateway.PaymentGatewayRouter;
-import com.project.razorpay.payment.gateway.dto.PaymentRequest;
-import com.project.razorpay.payment.gateway.dto.PaymentResult;
+import com.project.razorpay.payment.gateway.dto.PaymentGatewayRequest;
+import com.project.razorpay.payment.gateway.dto.PaymentGatewayResponse;
 import com.project.razorpay.payment.mapper.PaymentMapper;
 import com.project.razorpay.payment.repository.OrderRepository;
 import com.project.razorpay.payment.repository.PaymentRepository;
@@ -19,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     @Override
-    public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
+    public com.project.razorpay.payment.dto.response.PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
 
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(request.orderId(), merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order", request.orderId()));
@@ -57,22 +57,24 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment = paymentRepository.save(payment);
 
-        PaymentRequest paymentRequest = new PaymentRequest(payment.getId(),
+        PaymentGatewayRequest paymentGatewayRequest = new PaymentGatewayRequest(payment.getId(),
                 request.orderId(),
                 merchantId,
                 orderRecord.getAmount(),
                 request.method(),
                 request.methodDetails());
 
-        PaymentResult result = paymentGatewayRouter.initiate(paymentRequest);
+        PaymentGatewayResponse paymentGatewayResponse = paymentGatewayRouter.initiate(paymentGatewayRequest);
 
-        switch (result) {
-            case PaymentResult.Pending pending -> payment.setProcessorReference(pending.registrationReference());
-            case PaymentResult.Failure failure -> {
-
+        switch (paymentGatewayResponse) {
+            case PaymentGatewayResponse.Pending pending -> payment.setProcessorReference(pending.registrationReference());
+            case PaymentGatewayResponse.Failure failure -> {
                 payment.setStatus(PaymentStatus.FAILED);
                 payment.setErrorCode(failure.errorCode());
                 payment.setErrorDescription(failure.errorDescription());
+            }
+            case PaymentGatewayResponse.Success success-> {
+                payment.setProcessorReference(UUID.randomUUID().toString());
             }
         }
 
@@ -80,8 +82,45 @@ public class PaymentServiceImpl implements PaymentService {
 
         orderRepository.save(orderRecord);
 
+        // send an outbox (kafka event)
+
 
         return paymentMapper.toPaymentResponse(payment);
 
+    }
+
+    @Override
+    public com.project.razorpay.payment.dto.response.PaymentResponse capture(UUID paymentId, UUID merchantId) {
+
+        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,merchantId)
+                .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
+
+        payment.setStatus(PaymentStatus.CAPTURING); // TODO statemachine
+
+        PaymentGatewayResponse paymentGatewayResponse = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
+
+
+        if(paymentGatewayResponse instanceof  PaymentGatewayResponse.Success success) {
+
+            payment.setStatus(PaymentStatus.CAPTURED);
+            payment.setCapturedAt(LocalDateTime.now());
+
+            log.info("Payment captured successfully, PaymentID: {} " , paymentId);
+
+        } else if(paymentGatewayResponse instanceof PaymentGatewayResponse.Failure failure) {
+
+            payment.setStatus(PaymentStatus.AUTHORIZED);
+            payment.setErrorCode(failure.errorCode());
+            payment.setErrorDescription(failure.errorDescription());
+
+            log.warn("Payment capture failed, PaymentID: {}" , paymentId);
+        }
+
+        payment = paymentRepository.save(payment);
+
+        // send an outbox (kafka event)
+
+
+        return paymentMapper.toPaymentResponse(payment);
     }
 }

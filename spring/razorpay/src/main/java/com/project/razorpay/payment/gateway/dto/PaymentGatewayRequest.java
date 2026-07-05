@@ -6,7 +6,7 @@ import com.project.razorpay.common.enums.PaymentMethod;
 import java.util.Map;
 import java.util.UUID;
 
-public record PaymentRequest (
+public record PaymentGatewayRequest(
         UUID paymentId,
         UUID orderId,
         UUID merchantId,
