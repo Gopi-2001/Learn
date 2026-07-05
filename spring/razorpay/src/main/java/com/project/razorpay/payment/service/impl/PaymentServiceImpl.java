@@ -1,6 +1,7 @@
 package com.project.razorpay.payment.service.impl;
 
 import com.project.razorpay.common.enums.OrderStatus;
+import com.project.razorpay.common.enums.PaymentEvent;
 import com.project.razorpay.common.enums.PaymentStatus;
 import com.project.razorpay.common.exception.BusinessRuleValidationException;
 import com.project.razorpay.common.exception.ResourceNotFoundExecption;
@@ -14,6 +15,7 @@ import com.project.razorpay.payment.mapper.PaymentMapper;
 import com.project.razorpay.payment.repository.OrderRepository;
 import com.project.razorpay.payment.repository.PaymentRepository;
 import com.project.razorpay.payment.service.PaymentService;
+import com.project.razorpay.payment.statemachine.PaymentTransitionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentGatewayRouter paymentGatewayRouter;
     private final PaymentMapper paymentMapper;
+    private final PaymentTransitionService paymentTransitionService;
 
     @Override
     public com.project.razorpay.payment.dto.response.PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
@@ -69,7 +72,8 @@ public class PaymentServiceImpl implements PaymentService {
         switch (paymentGatewayResponse) {
             case PaymentGatewayResponse.Pending pending -> payment.setProcessorReference(pending.registrationReference());
             case PaymentGatewayResponse.Failure failure -> {
-                payment.setStatus(PaymentStatus.FAILED);
+                //payment.setStatus(PaymentStatus.FAILED);
+                paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAILURE);
                 payment.setErrorCode(failure.errorCode());
                 payment.setErrorDescription(failure.errorDescription());
             }
@@ -95,21 +99,27 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
 
-        payment.setStatus(PaymentStatus.CAPTURING); // TODO statemachine
+        // payment.setStatus(PaymentStatus.CAPTURING); // TODO statemachine
+
+        paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
 
         PaymentGatewayResponse paymentGatewayResponse = paymentGatewayRouter.capture(payment.getMethod(), paymentId);
 
 
         if(paymentGatewayResponse instanceof  PaymentGatewayResponse.Success success) {
 
-            payment.setStatus(PaymentStatus.CAPTURED);
+            // payment.setStatus(PaymentStatus.CAPTURED);
+
+            paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_SUCCESS);
             payment.setCapturedAt(LocalDateTime.now());
 
             log.info("Payment captured successfully, PaymentID: {} " , paymentId);
 
         } else if(paymentGatewayResponse instanceof PaymentGatewayResponse.Failure failure) {
 
-            payment.setStatus(PaymentStatus.AUTHORIZED);
+            // payment.setStatus(PaymentStatus.AUTHORIZED);
+
+            paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_FAILURE);
             payment.setErrorCode(failure.errorCode());
             payment.setErrorDescription(failure.errorDescription());
 
