@@ -78,7 +78,8 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.setErrorDescription(failure.errorDescription());
             }
             case PaymentGatewayResponse.Success success-> {
-                payment.setProcessorReference(UUID.randomUUID().toString());
+               log.warn("Invalid State");
+               return null;
             }
         }
 
