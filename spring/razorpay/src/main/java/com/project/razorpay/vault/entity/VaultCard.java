@@ -35,6 +35,7 @@ public class VaultCard  extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+
     private CardBrand brand; // VISA, RUPAY, MASTERCARD
 
     @Column(nullable = false)

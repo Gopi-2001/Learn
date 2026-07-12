@@ -19,6 +19,7 @@ import com.project.razorpay.payment.statemachine.PaymentTransitionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -55,6 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .amount(orderRecord.getAmount())
                 .status(PaymentStatus.CREATED)
                 .method(request.method())
+                .idempotencyKey(UUID.randomUUID().toString())
                 .methodDetails(request.methodDetails())
                 .build();
 
@@ -66,6 +68,8 @@ public class PaymentServiceImpl implements PaymentService {
                 orderRecord.getAmount(),
                 request.method(),
                 request.methodDetails());
+
+        paymentTransitionService.apply(payment,PaymentEvent.AUTHORIZE_ATTEMPT);
 
         PaymentGatewayResponse paymentGatewayResponse = paymentGatewayRouter.initiate(paymentGatewayRequest);
 
@@ -89,9 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // send an outbox (kafka event)
 
-
         return paymentMapper.toPaymentResponse(payment);
-
     }
 
     @Override
@@ -133,5 +135,66 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         return paymentMapper.toPaymentResponse(payment);
+    }
+
+
+    @Override
+    @Transactional
+    public void resolveAuthorization(UUID paymentId, boolean approve,
+                                     String bankRef, String errorCode, String errorDescription) {
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(( ) -> new ResourceNotFoundExecption("Payment", paymentId));
+
+        if(payment.getStatus() != PaymentStatus.AUTHORIZING) {
+
+            log.warn("Payment is not in Authorizing state, paymentId: {} , status: {}" ,  paymentId, payment.getStatus());
+        }
+
+        OrderRecord orderRecord = payment.getOrder();
+
+        if(approve) {
+            paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_SUCCESS);
+
+            payment.setBankReference(bankRef);
+
+            payment.setAuthorizedAt(LocalDateTime.now());
+
+            // Auto - capture
+
+            paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_REQUEST);
+
+            PaymentGatewayResponse paymentCaptureResult = paymentGatewayRouter.capture(payment.getMethod(),paymentId);
+
+
+            if(paymentCaptureResult instanceof  PaymentGatewayResponse.Success success) {
+
+                paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_SUCCESS);
+
+                payment.setCapturedAt(LocalDateTime.now());
+
+                orderRecord.setOrderStatus(OrderStatus.PAID);
+
+            } else if(paymentCaptureResult instanceof PaymentGatewayResponse.Failure failure) {
+
+                paymentTransitionService.apply(payment, PaymentEvent.CAPTURE_FAILURE);
+
+                payment.setErrorCode(failure.errorCode());
+
+                payment.setErrorDescription(failure.errorDescription());
+            }
+
+        } else {
+
+            paymentTransitionService.apply(payment, PaymentEvent.AUTHORIZE_FAILURE);
+
+            payment.setErrorCode(errorCode);
+
+            payment.setErrorDescription(errorDescription);
+        }
+
+        paymentRepository.save(payment);
+        orderRepository.save(orderRecord);
+
     }
 }
