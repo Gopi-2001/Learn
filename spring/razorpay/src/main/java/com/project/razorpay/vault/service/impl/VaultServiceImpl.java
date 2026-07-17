@@ -60,6 +60,7 @@ public class VaultServiceImpl implements VaultService {
                         .bin(bin)
                         .lastFour(lastFour)
                         .encryptedDek(encryptedDek)
+                        .encryptedPan(encryptedPan)
                         .cardHolderName(tokenizeRequest.cardHolderName())
                         .build());
 

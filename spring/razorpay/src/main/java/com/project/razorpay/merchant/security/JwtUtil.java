@@ -19,6 +19,7 @@ public class JwtUtil {
     private String secretKey;
 
     private SecretKey getSecretKey() {
+
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -47,6 +48,13 @@ public class JwtUtil {
     }
 
     public String extractRole(Claims claims) {
+
         return claims.get("role", String.class);
+
+    }
+
+    public UUID extractMerchantId(Claims claims){
+
+        return UUID.fromString(claims.get("merchant_Id", String.class));
     }
 }

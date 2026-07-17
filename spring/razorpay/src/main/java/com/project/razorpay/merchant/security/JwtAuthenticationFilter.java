@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    public static final String BEARER_PREFIX = "Bearer ";
     private final JwtUtil jwtUtil;
+    private final HandlerExceptionResolver handlerExceptionResolver;
+    private final MerchantContext merchantContext;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,12 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String authorizationHeader = request.getHeader("Authorization");
 
-            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            String jwtToken = authorizationHeader.split("Bearer ")[1];
+            String jwtToken = authorizationHeader.split(BEARER_PREFIX)[1];
 
             // This will also work
             //  String jwtToken = authorizationHeader.substring("Bearer ".length());
@@ -49,11 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         List.of(new SimpleGrantedAuthority("ROLE_" + jwtUtil.extractRole(claims))));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
+                merchantContext.setMerchantId(jwtUtil.extractMerchantId(claims));
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
+            handlerExceptionResolver.resolveException(request,response,null,e);
         }
 
 
