@@ -14,6 +14,12 @@ spring:
     username: ${DB_USER:user}   # Defaults to your single admin user 'postgres'
     password: ${DB_PASSWORD:password}      # Leave blank or insert fallback if required
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
   jpa:
     show-sql: true                  # Prints SQL queries in your terminal console
     properties:
