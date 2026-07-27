@@ -54,3 +54,11 @@ payment:
 
 jwt:
   secret-key: ${SECRET_KEY}
+
+
+app:
+  rate-limit:
+    method: ${RATE_LIMIT_METHOD:fixed}
+    use-case:
+      api-key:
+        request-per-minute: ${REQ_PER_MIN:2}

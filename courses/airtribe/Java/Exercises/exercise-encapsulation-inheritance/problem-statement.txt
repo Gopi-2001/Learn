@@ -1,0 +1,38 @@
+Problem Statement
+Design a StudentReportCard class that stores a student's information and grades securely using encapsulation.
+
+Requirements:
+The class should have the following private fields:
+
+name (String) - student's name
+rollNumber (int) - student's roll number
+mathScore (double) - marks in Math (0-100)
+scienceScore (double) - marks in Science (0-100)
+englishScore (double) - marks in English (0-100)
+Provide a constructor that takes name and rollNumber.
+
+Provide public getters for all fields.
+
+Provide public setters for the three scores with validation:
+
+Score must be between 0 and 100 (inclusive).
+If an invalid score is passed, print an error message and do NOT update the score.
+Write a public method getPercentage() that returns the average of the three scores.
+
+Write a public method getGrade() that returns:
+
+"A" if percentage >= 80
+"B" if percentage >= 60
+"C" if percentage >= 40
+"F" if percentage < 40
+Write a public method printReportCard() that prints all details in this format:
+
+=== Report Card ===
+Name: Rahul
+Roll Number: 101
+Math: 85.0
+Science: 72.0
+English: 90.0
+Percentage: 82.33%
+Grade: A
+===================

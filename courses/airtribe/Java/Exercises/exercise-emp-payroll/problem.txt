@@ -1,0 +1,29 @@
+Problem Statement
+Design a simple Employee payroll system using inheritance, constructor chaining with super, method overriding, and method overloading.
+
+Requirements:
+Create a base class Employee with:
+
+private fields: name (String), id (int), baseSalary (double)
+A constructor that takes all 3 fields
+A method calculatePay() that returns the baseSalary
+A method displayInfo() that prints name, id, and calculated pay
+Create a subclass FullTimeEmployee extends Employee with:
+
+An extra field: bonus (double)
+A constructor that takes name, id, baseSalary, and bonus (use super() to call parent constructor)
+Override calculatePay() to return baseSalary + bonus
+Create a subclass PartTimeEmployee extends Employee with:
+
+Extra fields: hoursWorked (int), hourlyRate (double)
+A constructor that takes name, id, hoursWorked, and hourlyRate (pass 0 as baseSalary to super)
+Override calculatePay() to return hoursWorked * hourlyRate
+In FullTimeEmployee, overload displayInfo():
+
+displayInfo() — no args, prints everything including bonus
+displayInfo(boolean showBonus) — if false, hides the bonus line
+In a Main class:
+
+Create one FullTimeEmployee and one PartTimeEmployee
+Store both in an Employee[] array
+Loop through the array and call displayInfo() — observe polymorphism!
