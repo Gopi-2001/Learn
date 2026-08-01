@@ -66,7 +66,7 @@ To execute a compiled class you must supply:
 - the **fully qualified class name** (dot-separated, no `.class` extension).
 
 ```bash
-java -cp target com.airtribe.learntrack.ui.Main
+java -cp target com.airtribe.learntrack.ui.main
 ```
 
 This works fine for a small project, but it starts to break down as the codebase grows.

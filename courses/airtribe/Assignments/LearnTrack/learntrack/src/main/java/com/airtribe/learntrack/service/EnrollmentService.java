@@ -1,11 +1,12 @@
 package com.airtribe.learntrack.service;
 
-import com.airtribe.learntrack.entity.Enrollment;
 import java.util.ArrayList;
+
 import com.airtribe.learntrack.common.Status;
+import com.airtribe.learntrack.entity.Enrollment;
 
 public class EnrollmentService {
-    ArrayList<Enrollment> enrollments = new ArrayList<>();
+    private final ArrayList<Enrollment> enrollments = new ArrayList<>();
 
     public void enrollStudent(Enrollment enrollment) {
         enrollments.add(enrollment);

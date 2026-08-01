@@ -1,12 +1,12 @@
 package com.airtribe.learntrack.service;
 
+import java.util.ArrayList;
+
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 
-import java.util.*;
-
 public class CourseService {
-    ArrayList<Course> courses = new ArrayList<>();
+    private final ArrayList<Course> courses = new ArrayList<>();
 
     public void addCourse(Course course) {
         courses.add(course);

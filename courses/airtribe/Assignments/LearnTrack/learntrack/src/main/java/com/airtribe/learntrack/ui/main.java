@@ -1,11 +1,15 @@
 package com.airtribe.learntrack.ui;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Scanner;
 
-import com.airtribe.learntrack.entity.*;
-import com.airtribe.learntrack.service.*;
-import com.airtribe.learntrack.common.*;
+import com.airtribe.learntrack.common.Status;
+import com.airtribe.learntrack.entity.Course;
+import com.airtribe.learntrack.entity.Enrollment;
+import com.airtribe.learntrack.entity.Student;
+import com.airtribe.learntrack.service.CourseService;
+import com.airtribe.learntrack.service.EnrollmentService;
+import com.airtribe.learntrack.service.StudentService;
 
 public class main {
 
@@ -19,11 +23,13 @@ public class main {
 		boolean keepAsking = true;
 
 		do{
+			
 			homeMenu();
 
 			int homeChoice = scanner.nextInt();
 			scanner.nextLine();
 
+			try {
 			switch(homeChoice){
 				case 1:
 					studentManagement();
@@ -40,6 +46,9 @@ public class main {
 					break;
 				default:
 					System.out.println("Invalid choice. Please try again.");
+			}
+			} catch (Exception e) {
+			System.out.println("An error occurred: " + e.getMessage());
 			}
 
 		} while(keepAsking);
@@ -59,9 +68,12 @@ public class main {
 		do {
 			studentMenu();
 
+			
+
 			int choice = scanner.nextInt();
 			scanner.nextLine();
 
+			try {
 			switch(choice){
 				case 1: {
 					System.out.println("Enter Student FirstName:");
@@ -77,6 +89,8 @@ public class main {
 					scanner.nextLine();
 
 					studentService.addStudent(new Student(firstName, lastName, email, batch, active));
+					System.out.println("Student added successfully!");
+										
 					break;
 				}
 				case 2: {
@@ -123,7 +137,9 @@ public class main {
 				default:
 					System.out.println("Invalid choice. Please try again.");
 			}
-
+			} catch (Exception e) {
+				System.out.println("An error occurred: " + e.getMessage());
+			}
 		} while(true);
 	}
 
@@ -135,10 +151,12 @@ public class main {
 
 		do {
 			courseMenu();
-
+			
+			
 			int choice = scanner.nextInt();
 			scanner.nextLine();
 
+			try{
 			switch(choice) {
 				case 1: {
 					System.out.println("Enter Course Name:");
@@ -183,6 +201,10 @@ public class main {
 					System.out.println("Invalid choice. Please try again.");
 
 			}
+			} catch (Exception e) {
+				System.out.println("An error occurred: " + e.getMessage()); 
+			}
+
 		} while(true);
 
 
@@ -198,9 +220,11 @@ public class main {
 
 			enrollmentMenu();
 
+			
 			int choice = scanner.nextInt();
 			scanner.nextLine();
 
+			try {
 			switch(choice){
 				case 1: {
 					System.out.println("Enter Student ID:");
@@ -246,6 +270,9 @@ public class main {
 				}
 				default:
 					System.out.println("Invalid choice. Please try again.");
+			}
+			} catch (Exception e) {
+				System.out.println("An error occurred: " + e.getMessage());
 			}
 		} while(true);
 	}
