@@ -36,7 +36,7 @@ public class RedisApiKeyCache implements ApiKeyCache {
             return Optional.of(objectMapper.readValue(json, ApiKeyCacheEntry.class));
 
         } catch (Exception e) {
-            log.warn("ApiKey cache read filed, keyId: {}", keyId);
+            log.warn("ApiKey cache read failed, keyId: {}", keyId);
             return Optional.empty();
         }
     }
@@ -50,7 +50,7 @@ public class RedisApiKeyCache implements ApiKeyCache {
                         REDIS_TTL);
 
             } catch (Exception e){
-                log.warn("ApiKey cache put filed, keyId: {}", keyId);
+                log.warn("ApiKey cache put failed, keyId: {}", keyId);
             }
     }
 

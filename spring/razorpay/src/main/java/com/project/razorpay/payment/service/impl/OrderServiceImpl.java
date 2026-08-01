@@ -11,8 +11,10 @@ import com.project.razorpay.payment.entity.OrderRecord;
 import com.project.razorpay.payment.entity.Payment;
 import com.project.razorpay.payment.mapper.OrderMapper;
 import com.project.razorpay.payment.mapper.PaymentMapper;
+import com.project.razorpay.payment.repository.CustomerRepository;
 import com.project.razorpay.payment.repository.OrderRepository;
 import com.project.razorpay.payment.repository.PaymentRepository;
+import com.project.razorpay.payment.service.CustomerService;
 import com.project.razorpay.payment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +34,11 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-
     private final PaymentRepository paymentRepository;
-
     private final PaymentMapper paymentMapper;
-
     private final OrderMapper orderMapper;
+    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
     @Value("${payment.order.default-order-expiry-minutes: 30}")
     private int defaultOrderExpiryMinutes;
@@ -50,11 +51,21 @@ public class OrderServiceImpl implements OrderService {
             throw new DuplicateResourceException("ORDER_RECEIPT_DUPLICATE","Order with receipt already exists" + request.receipt());
         }
 
+        UUID customerId = null;
+
+        if(request.customer() != null) {
+            customerId = customerService.findOrCreate(merchantId,
+                    request.customer().email(),
+                    request.customer().name(),
+                    request.customer().phone());
+        }
+
         OrderRecord order = OrderRecord.builder()
                 .receipt(request.receipt())
                 .amount(request.amount())
                 .notes(request.notes())
                 .merchantId(merchantId)
+                .customerId(customerId)
                 .orderStatus(OrderStatus.CREATED)
                 .expiresAt(request.expiresAt() != null ? request.expiresAt() :
                         LocalDateTime.now().plusMinutes(defaultOrderExpiryMinutes))

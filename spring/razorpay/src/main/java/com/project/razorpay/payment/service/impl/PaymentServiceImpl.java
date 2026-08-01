@@ -6,6 +6,7 @@ import com.project.razorpay.common.enums.PaymentStatus;
 import com.project.razorpay.common.exception.BusinessRuleValidationException;
 import com.project.razorpay.common.exception.ResourceNotFoundExecption;
 import com.project.razorpay.payment.dto.request.PaymentInitRequest;
+import com.project.razorpay.payment.dto.response.PaymentResponse;
 import com.project.razorpay.payment.entity.OrderRecord;
 import com.project.razorpay.payment.entity.Payment;
 import com.project.razorpay.payment.gateway.PaymentGatewayRouter;
@@ -19,6 +20,7 @@ import com.project.razorpay.payment.statemachine.PaymentTransitionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -36,9 +38,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentTransitionService paymentTransitionService;
 
     @Override
-    public com.project.razorpay.payment.dto.response.PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
+    @Transactional
+    public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
 
-        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(request.orderId(), merchantId)
+//        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(request.orderId(), merchantId)
+//                .orElseThrow(() -> new ResourceNotFoundExecption("Order", request.orderId()));
+
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantIdForUpdate(request.orderId(), merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Order", request.orderId()));
 
         // ~ (A || B)  === ~A && ~B
@@ -97,9 +103,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public com.project.razorpay.payment.dto.response.PaymentResponse capture(UUID paymentId, UUID merchantId) {
 
-        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,merchantId)
+//        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,merchantId)
+//                .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
+
+        Payment payment = paymentRepository.findByIdAndMerchantIdForUpdate(paymentId,merchantId)
                 .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
 
         // payment.setStatus(PaymentStatus.CAPTURING); // TODO statemachine
@@ -143,7 +153,10 @@ public class PaymentServiceImpl implements PaymentService {
     public void resolveAuthorization(UUID paymentId, boolean approve,
                                      String bankRef, String errorCode, String errorDescription) {
 
-        Payment payment = paymentRepository.findById(paymentId)
+//        Payment payment = paymentRepository.findById(paymentId)
+//                .orElseThrow(( ) -> new ResourceNotFoundExecption("Payment", paymentId));
+
+        Payment payment = paymentRepository.findByIdForUpdate(paymentId)
                 .orElseThrow(( ) -> new ResourceNotFoundExecption("Payment", paymentId));
 
         if(payment.getStatus() != PaymentStatus.AUTHORIZING) {
