@@ -2,11 +2,13 @@ package com.project.razorpay.payment.entity;
 
 import com.project.razorpay.common.entity.BaseEntity;
 import com.project.razorpay.common.enums.EventAggregateType;
+import com.project.razorpay.common.enums.OutboxStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +31,7 @@ public class OutboxEvent extends BaseEntity {
     @Column(nullable = false)
     private UUID aggregateId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String eventType;
 
 //    @Column(nullable = false)
@@ -39,6 +41,17 @@ public class OutboxEvent extends BaseEntity {
     @Column(nullable = false, columnDefinition = "jsonb")
     private Map<String,Object> payload;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    @Column(nullable = false)
+    private OutboxStatus status = OutboxStatus.PENDING;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer attempts = 0;
 
+    @Column(length = 1000)
+    private String lastError;
+
+    private LocalDateTime publishedAt;
 }
