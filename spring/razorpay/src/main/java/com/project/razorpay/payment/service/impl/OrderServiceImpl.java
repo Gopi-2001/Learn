@@ -4,7 +4,7 @@ import com.project.razorpay.common.enums.EventAggregateType;
 import com.project.razorpay.common.enums.OrderStatus;
 import com.project.razorpay.common.exception.BusinessRuleValidationException;
 import com.project.razorpay.common.exception.DuplicateResourceException;
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.payment.dto.request.CreateOrderRequest;
 import com.project.razorpay.payment.dto.response.OrderResponse;
 import com.project.razorpay.payment.dto.response.PaymentResponse;
@@ -13,11 +13,9 @@ import com.project.razorpay.payment.entity.Payment;
 import com.project.razorpay.payment.mapper.OrderMapper;
 import com.project.razorpay.payment.mapper.PaymentMapper;
 import com.project.razorpay.payment.outbox.OutboxEventPublisher;
-import com.project.razorpay.payment.repository.CustomerRepository;
 import com.project.razorpay.payment.repository.OrderRepository;
-import com.project.razorpay.payment.repository.OutboxEventRepository;
 import com.project.razorpay.payment.repository.PaymentRepository;
-import com.project.razorpay.payment.service.CustomerService;
+import com.project.razorpay.merchant.service.CustomerService;
 import com.project.razorpay.payment.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse getById(UUID merchantId, UUID orderId) {
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order" , orderId));
 
         return orderMapper.toOrderResponse(orderRecord);
     }
@@ -112,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse cancel(UUID merchantId, UUID orderId) {
 
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order" , orderId));
 
         if(orderRecord.getOrderStatus().equals(OrderStatus.CANCELED) || orderRecord.getOrderStatus().equals(OrderStatus.PAID)) {
             throw new BusinessRuleValidationException("ORDER_CANNOT_CANCEL", "Cannot cancel order with status: " + orderRecord.getOrderStatus().name());
@@ -136,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<PaymentResponse> listPayment(UUID merchantId, UUID orderId) {
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId,merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Order" , orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order" , orderId));
 
         List<Payment> paymentsList = paymentRepository.findByOrderId(orderId);
 

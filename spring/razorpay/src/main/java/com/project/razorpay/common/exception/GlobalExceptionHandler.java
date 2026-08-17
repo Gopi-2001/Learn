@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ex.getErrorCode(),ex.getMessage()));
     }
 
-    @ExceptionHandler(ResourceNotFoundExecption.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundExecption ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
         String errorCode = ex.getResourceName().toUpperCase() + "_NOT_FOUND";
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

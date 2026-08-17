@@ -1,11 +1,11 @@
-package com.project.razorpay.payment.service.impl;
+package com.project.razorpay.merchant.service.impl;
 
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.merchant.entity.Customer;
 import com.project.razorpay.merchant.entity.Merchant;
+import com.project.razorpay.merchant.repository.CustomerRepository;
 import com.project.razorpay.merchant.repository.MerchantRepository;
-import com.project.razorpay.payment.repository.CustomerRepository;
-import com.project.razorpay.payment.service.CustomerService;
+import com.project.razorpay.merchant.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,32 +13,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Service
+@Service("merchantCustomerService")
 @RequiredArgsConstructor
 @Slf4j
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-
     private final MerchantRepository merchantRepository;
 
     @Override
     @Transactional
     public UUID findOrCreate(UUID merchantId, String email, String name, String phone) {
 
-        if(email == null || email.isBlank()) {
+        if (email == null || email.isBlank()) {
             return null;
         }
 
-        return customerRepository.findByMerchantIdAndEmail(merchantId,email)
+        return customerRepository.findByMerchant_IdAndEmail(merchantId, email)
                 .map(Customer::getId)
-                .orElseGet(() -> createNew(merchantId, email,name,phone));
-
+                .orElseGet(() -> createNew(merchantId, email, name, phone));
     }
 
+
     private UUID createNew(UUID merchantId, String email, String name, String phone) {
-        Merchant merchant= merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Merchant",merchantId));
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Merchant", merchantId));
 
         Customer customer = Customer.builder()
                 .merchant(merchant)
@@ -48,10 +47,29 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
 
         customer = customerRepository.save(customer);
-
-        log.info("Customer created via findOrCreate id={}, merchantId={}, email={}",customer.getId(),merchant.getId(),email);
-
+        log.info("Customer created via findOrCreate id={} merchantId={} email={}",
+                customer.getId(), merchantId, email);
         return customer.getId();
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

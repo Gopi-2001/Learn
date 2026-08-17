@@ -1,0 +1,4 @@
+0. Drive - https://drive.google.com/drive/folders/1saBabqRD_tMbEravbOMZSXMG9WPZwg7X
+1. https://github.com/ashishps1/awesome-low-level-design
+2. https://github.com/baoozuma/Head-First-All-Series-PDF/blob/main/Head%20First%20Design%20Patterns.pdf
+3. https://www.mheducation.co.in/java-the-complete-reference-9789355326478-india

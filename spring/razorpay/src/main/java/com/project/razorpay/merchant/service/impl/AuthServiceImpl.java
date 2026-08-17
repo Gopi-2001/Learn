@@ -3,7 +3,7 @@ package com.project.razorpay.merchant.service.impl;
 import com.project.razorpay.common.enums.MerchantStatus;
 import com.project.razorpay.common.enums.UserRole;
 import com.project.razorpay.common.exception.DuplicateResourceException;
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.merchant.dto.request.LoginRequest;
 import com.project.razorpay.merchant.dto.request.MerchantSignupRequest;
 import com.project.razorpay.merchant.dto.response.LoginResponse;
@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         AppUser appUser = appUserRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ResourceNotFoundExecption("User", request.email()));
+                .orElseThrow(() -> new ResourceNotFoundException("User", request.email()));
 
         String token = jwtUtil.generateAccessToken(request.email(), appUser.getMerchant().getId(), appUser.getRole().toString());
 

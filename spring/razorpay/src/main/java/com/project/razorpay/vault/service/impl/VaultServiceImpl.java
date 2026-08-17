@@ -2,7 +2,7 @@ package com.project.razorpay.vault.service.impl;
 
 import com.project.razorpay.common.entity.Money;
 import com.project.razorpay.common.enums.CardBrand;
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.common.util.RandomizerUtil;
 import com.project.razorpay.payment.processor.PaymentProcessorRouter;
 import com.project.razorpay.payment.processor.dto.request.PaymentProcessorRequest;
@@ -81,7 +81,7 @@ public class VaultServiceImpl implements VaultService {
     public PaymentProcessorResponse charge(UUID paymentId, String token, Money amount, Map<String, Object> methodDetails) {
 
         CardToken cardToken = cardTokenRepository.findByTokenAndRevokedAtIsNull(token)
-            .orElseThrow(() -> new ResourceNotFoundExecption("CardToken", token));
+            .orElseThrow(() -> new ResourceNotFoundException("CardToken", token));
 
         VaultCard vaultCard = cardToken.getVaultCard();
 

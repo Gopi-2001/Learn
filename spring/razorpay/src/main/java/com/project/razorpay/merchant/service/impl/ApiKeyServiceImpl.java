@@ -1,6 +1,6 @@
 package com.project.razorpay.merchant.service.impl;
 
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.common.util.RandomizerUtil;
 import com.project.razorpay.merchant.cache.ApiKeyCache;
 import com.project.razorpay.merchant.dto.request.ApiKeyCreateRequest;
@@ -40,7 +40,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     public ApiKeyCreateResponse create(UUID merchantId, ApiKeyCreateRequest request) {
 
         Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("merchant", merchantId));
+                .orElseThrow(() -> new ResourceNotFoundException("merchant", merchantId));
 
         String keyId = "rzp_" + request.environment().name().toLowerCase() + "_" + RandomizerUtil.randomBase64(24);
 
@@ -73,7 +73,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     public void revoke(UUID merchantId, UUID keyId) {
         ApiKey key = apiKeyRepository.findById(keyId)
                 .filter(k -> k.getMerchant().getId().equals(merchantId))
-                .orElseThrow(() -> new ResourceNotFoundExecption("ApiKey", keyId));
+                .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
 
         key.setEnabled(false);
 
@@ -94,7 +94,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
 
             ApiKey apiKey = apiKeyRepository.findById(keyId)
                 .filter(k -> k.getMerchant().getId().equals(merchantId))
-                .orElseThrow(() -> new ResourceNotFoundExecption("ApiKey", keyId));
+                .orElseThrow(() -> new ResourceNotFoundException("ApiKey", keyId));
 
             if(!apiKey.isEnabled()) throw new RuntimeException("Cannot rotate a disabled ApiKey");
 

@@ -30,6 +30,8 @@ spring:
       ddl-auto: update              # Automatically updates database schemas based on entity updates
 
   kafka:
+    listener:
+      ack-mode: manual
     bootstrap-servers: ${KAFKA_BROKERS:localhost:29092}
     producer:
       acks: all
@@ -50,6 +52,11 @@ spring:
         spring.json.trusted.packages: "com.project.razorpay.*"
         spring.json.use.type.headers: false
         spring.json.value.default.type: java.util.LinkedHashMap
+
+threads:
+  virtual:
+    enabled: true
+
 
 vault:
   master-key: ${MASTER_KEY}
@@ -83,10 +90,15 @@ app:
     method: ${RATE_LIMIT_METHOD:fixed}
     use-case:
       api-key:
-        request-per-minute: ${REQ_PER_MIN:2}
+        request-per-minute: ${REQ_PER_MIN:200}
   kafka:
     topics:
       payments: payments.events
       order: orders.events
       refund: refund.events
       settlement: settlement.events
+  webhook:
+    delivery:
+      redis-key: "webhook-retry"
+      poll-batch-size: 100
+

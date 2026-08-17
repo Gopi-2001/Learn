@@ -5,7 +5,7 @@ import com.project.razorpay.common.enums.OrderStatus;
 import com.project.razorpay.common.enums.PaymentEvent;
 import com.project.razorpay.common.enums.PaymentStatus;
 import com.project.razorpay.common.exception.BusinessRuleValidationException;
-import com.project.razorpay.common.exception.ResourceNotFoundExecption;
+import com.project.razorpay.common.exception.ResourceNotFoundException;
 import com.project.razorpay.payment.dto.request.PaymentInitRequest;
 import com.project.razorpay.payment.dto.response.PaymentResponse;
 import com.project.razorpay.payment.entity.OrderRecord;
@@ -45,10 +45,10 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
 
 //        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(request.orderId(), merchantId)
-//                .orElseThrow(() -> new ResourceNotFoundExecption("Order", request.orderId()));
+//                .orElseThrow(() -> new ResourceNotFoundException("Order", request.orderId()));
 
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantIdForUpdate(request.orderId(), merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Order", request.orderId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Order", request.orderId()));
 
         // ~ (A || B)  === ~A && ~B
         if((orderRecord.getOrderStatus() != OrderStatus.CREATED) && (orderRecord.getOrderStatus() != OrderStatus.ATTEMPTED)) {
@@ -118,10 +118,10 @@ public class PaymentServiceImpl implements PaymentService {
     public com.project.razorpay.payment.dto.response.PaymentResponse capture(UUID paymentId, UUID merchantId) {
 
 //        Payment payment = paymentRepository.findByIdAndMerchantId(paymentId,merchantId)
-//                .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
+//                .orElseThrow(() -> new ResourceNotFoundException("Payment", paymentId));
 
         Payment payment = paymentRepository.findByIdAndMerchantIdForUpdate(paymentId,merchantId)
-                .orElseThrow(() -> new ResourceNotFoundExecption("Payment", paymentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", paymentId));
 
         // payment.setStatus(PaymentStatus.CAPTURING); // TODO statemachine
 
@@ -173,10 +173,10 @@ public class PaymentServiceImpl implements PaymentService {
                                      String bankRef, String errorCode, String errorDescription) {
 
 //        Payment payment = paymentRepository.findById(paymentId)
-//                .orElseThrow(( ) -> new ResourceNotFoundExecption("Payment", paymentId));
+//                .orElseThrow(( ) -> new ResourceNotFoundException("Payment", paymentId));
 
         Payment payment = paymentRepository.findByIdForUpdate(paymentId)
-                .orElseThrow(( ) -> new ResourceNotFoundExecption("Payment", paymentId));
+                .orElseThrow(( ) -> new ResourceNotFoundException("Payment", paymentId));
 
         if(payment.getStatus() != PaymentStatus.AUTHORIZING) {
 
