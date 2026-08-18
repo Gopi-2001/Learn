@@ -1,0 +1,20 @@
+# docker-compose.prod.yml
+# Merge with base file for production:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+
+  api:
+    deploy:
+      replicas: 3              # run 3 api containers (requires a swarm or compatible runtime)
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    environment:
+      NODE_ENV: production
+
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"

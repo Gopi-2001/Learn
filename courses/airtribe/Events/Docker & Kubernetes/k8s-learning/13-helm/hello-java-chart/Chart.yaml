@@ -1,0 +1,12 @@
+apiVersion: v2
+name: hello-java-chart
+description: Helm chart for the Java Spring Boot hello-world app
+
+# 'application' or 'library'
+type: application
+
+# Chart version (your chart, not the app version)
+version: 0.1.0
+
+# App version (the Docker image tag)
+appVersion: "1.0.0"

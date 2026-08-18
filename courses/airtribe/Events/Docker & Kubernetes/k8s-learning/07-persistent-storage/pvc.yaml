@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+
+metadata:
+  name: postgres-pvc
+
+spec:
+  # Dynamic provisioning: K8s (minikube) creates the PV automatically
+  # 'standard' is minikube's default StorageClass
+  storageClassName: standard
+
+  accessModes:
+    - ReadWriteOnce    # only one node can mount this at a time (fine for a single DB pod)
+
+  resources:
+    requests:
+      storage: 1Gi    # request 1 GB of storage

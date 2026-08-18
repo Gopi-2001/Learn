@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: javaapp
+data:
+  # PostgreSQL connection config
+  DB_HOST: "postgres-service"   # K8s Service name — DNS resolves to postgres pod(s)
+  DB_PORT: "5432"
+  DB_NAME: "appdb"
+  DB_USER: "appuser"
+  POSTGRES_DB: "appdb"
+
+  # Redis connection config
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+  # API config
+  PORT: "8080"
+  SPRING_PROFILES_ACTIVE: "prod"

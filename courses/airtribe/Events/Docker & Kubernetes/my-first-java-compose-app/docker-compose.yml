@@ -1,0 +1,101 @@
+# docker-compose.yml — Java edition
+# Mirrors my-first-compose-app but with Spring Boot instead of Node.js
+# Run with: docker compose up -d
+
+name: javaapp
+
+services:
+
+  # ── 1. PostgreSQL database ──────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: javaapp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── 2. Redis cache ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: javaapp-redis
+    restart: unless-stopped
+    command: redis-server --save 60 1
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ── 3. Java Spring Boot API ──────────────────────────────────────
+  api:
+    build:
+      context: .             # root of the project (pom.xml is here)
+      dockerfile: api/Dockerfile
+    container_name: javaapp-api
+    restart: unless-stopped
+    environment:
+      # Compose DNS resolves "db" and "redis" to their container IPs
+      DB_HOST:     db
+      DB_PORT:     ${DB_PORT}
+      DB_NAME:     ${DB_NAME}
+      DB_USER:     ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST:  redis
+      REDIS_PORT:  ${REDIS_PORT}
+      PORT:        ${API_PORT}
+    depends_on:
+      db:
+        condition: service_healthy      # wait for Postgres to be ready
+      redis:
+        condition: service_healthy      # wait for Redis to be ready
+    networks:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:${API_PORT}/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 40s    # Spring Boot needs time to start (longer than Node.js)
+
+  # ── 4. Nginx reverse proxy ───────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: javaapp-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"           # host port 8080 → Nginx port 80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - frontend
+
+# ── Named Volumes ────────────────────────────────────────────────
+volumes:
+  db-data:
+  redis-data:
+
+# ── Networks ─────────────────────────────────────────────────────
+networks:
+  backend:    # db ↔ redis ↔ api  (internal, no external access)
+  frontend:   # api ↔ nginx       (nginx faces the outside)

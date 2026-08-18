@@ -1,0 +1,29 @@
+# 1. Go into the folder
+cd my-first-compose-app
+
+# 2. Start everything
+docker compose up --build -d
+
+# 3. Check all services are healthy
+docker compose ps
+
+# 4. Test the app (through nginx on port 8080)
+curl http://localhost:8080/hello
+# First call → source: "db"
+curl http://localhost:8080/hello
+# Second call (within 10s) → source: "cache"
+
+# 5. See the visit records in Postgres
+docker compose exec db psql -U appuser -d appdb -c "SELECT * FROM visits;"
+
+# 6. Check the Redis cache
+docker compose exec redis redis-cli keys "*"
+
+# 7. Follow API logs
+docker compose logs -f api
+
+# 8. Stop everything (keeps data)
+docker compose down
+
+# 9. Stop and wipe all data
+docker compose down -v

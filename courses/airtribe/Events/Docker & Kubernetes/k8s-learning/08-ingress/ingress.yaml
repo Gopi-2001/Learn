@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: hello-java-ingress
+  annotations:
+    # Use the nginx ingress controller (enabled via: minikube addons enable ingress)
+    kubernetes.io/ingress.class: nginx
+    # Strip the /app prefix before forwarding to the service
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+    - host: hello-java.local      # add to C:\Windows\System32\drivers\etc\hosts
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-java-cluster    # the ClusterIP service name
+                port:
+                  number: 8080

@@ -1,0 +1,46 @@
+# Docker + Java (Spring Boot) — Quick Reference
+# ================================================
+# Run these from: c:\Learn\copilot\my-first-java-docker-app\
+
+# ── Build the image ──────────────────────────────────────────────────────
+docker build -t hello-java:1.0.0 .
+# -t hello-java:1.0.0   tag the image (name:version)
+# .                     build context = current directory
+
+# Watch the two stages:
+#   Stage 1 → "builder": Maven downloads deps, compiles source, creates JAR
+#   Stage 2 → "runner" : copies only the JAR, much smaller final image
+
+# ── Run the container ────────────────────────────────────────────────────
+docker run -d -p 8080:8080 --name hello-java hello-java:1.0.0
+# -d          detached (background)
+# -p 8080:8080  host:container port mapping
+
+# ── Test it ──────────────────────────────────────────────────────────────
+curl http://localhost:8080/
+curl http://localhost:8080/health
+curl http://localhost:8080/actuator/health
+
+# ── Inspect ──────────────────────────────────────────────────────────────
+docker ps
+docker logs hello-java
+docker logs -f hello-java          # follow (live tail)
+docker inspect hello-java
+
+# ── Image size comparison ────────────────────────────────────────────────
+docker images | findstr hello-java
+# Notice: final image (~200 MB) is much smaller than the builder (~700 MB)
+# because we only include the JRE, not JDK + Maven + source code
+
+# ── Shell into running container ─────────────────────────────────────────
+docker exec -it hello-java sh
+# Inside: ls /app        → you see only app.jar (no source code!)
+#         java -version  → shows JRE, not JDK
+
+# ── Stop and clean up ────────────────────────────────────────────────────
+docker stop hello-java
+docker rm hello-java
+docker rmi hello-java:1.0.0
+
+# ── Override port via env var ─────────────────────────────────────────────
+docker run -d -p 9090:9090 -e PORT=9090 --name hello-java hello-java:1.0.0

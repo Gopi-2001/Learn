@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: hello-java-node
+  labels:
+    app: hello-java
+
+spec:
+  type: NodePort     # opens a port on every Node — accessible from outside the cluster
+
+  selector:
+    app: hello-java
+
+  ports:
+    - protocol: TCP
+      port: 8080          # ClusterIP port (for internal pod-to-service calls)
+      targetPort: 8080    # pod port (containerPort)
+      nodePort: 30080     # external port on each Node (range: 30000-32767)
+                          # access via: http://<minikube-ip>:30080

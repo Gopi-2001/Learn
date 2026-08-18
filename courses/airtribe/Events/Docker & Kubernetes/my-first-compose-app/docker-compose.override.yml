@@ -1,0 +1,18 @@
+# docker-compose.override.yml
+# Automatically merged with docker-compose.yml when you run `docker compose up`
+# Use this for local development overrides — never commit secrets here
+
+services:
+
+  api:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./api:/app             # bind mount — live reload your code without rebuilding
+      - /app/node_modules      # anonymous volume keeps image-built node_modules intact
+    ports:
+      - "3000:3000"            # expose api directly for local debugging
+
+  db:
+    ports:
+      - "5432:5432"            # expose postgres to use a GUI like TablePlus locally

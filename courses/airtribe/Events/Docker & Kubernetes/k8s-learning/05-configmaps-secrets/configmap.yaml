@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: java-app-config
+
+# Non-sensitive configuration — equivalent to .env file entries
+data:
+  DB_HOST: "postgres-service"   # K8s Service name for PostgreSQL
+  DB_PORT: "5432"
+  DB_NAME: "appdb"
+  DB_USER: "appuser"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  PORT: "8080"
+  SPRING_PROFILES_ACTIVE: "prod"

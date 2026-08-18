@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-java
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-java
+  template:
+    metadata:
+      labels:
+        app: hello-java
+    spec:
+      containers:
+        - name: hello-java-container
+          image: hello-java:1.0.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+
+          # ── RESOURCE REQUESTS & LIMITS ────────────────────────────────
+          resources:
+            # requests = minimum guaranteed; used by scheduler to place the pod
+            requests:
+              memory: "256Mi"    # JVM startup needs ~200-256Mi minimum
+              cpu: "100m"        # 10% of a CPU core at idle
+
+            # limits = maximum allowed
+            # If memory exceeds limit → OOMKill (pod restarts)
+            # If CPU exceeds limit    → throttled (slowed down, not killed)
+            limits:
+              memory: "512Mi"    # give JVM room to grow
+              cpu: "500m"        # 50% of one core
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
