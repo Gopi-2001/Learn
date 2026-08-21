@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.razorpay.common.dto.WebhookTarget;
 import com.project.razorpay.common.enums.WebhookEventStatus;
 import com.project.razorpay.common.util.SignerUtil;
-import com.project.razorpay.merchant.api.MerchantWebhookApi;
+import com.project.razorpay.merchant.api.MerchantLookupService;
 import com.project.razorpay.operations.entity.WebhookEvent;
 import com.project.razorpay.operations.repository.WebhookEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WebhookKafkaConsumer {
 
-    private final MerchantWebhookApi merchantWebhookApi;
+    private final MerchantLookupService merchantLookupService;
     private final ObjectMapper objectMapper;
     private final SignerUtil signerUtil;
     private final WebhookEventRepository webhookEventRepository;
@@ -59,7 +59,7 @@ public class WebhookKafkaConsumer {
 
             UUID merchantId = UUID.fromString(rawMerchantId.toString());
 
-            List<WebhookTarget> targets = merchantWebhookApi.getActiveConfigsForEvent(merchantId, eventType);
+            List<WebhookTarget> targets = merchantLookupService.getActiveConfigsForEvent(merchantId, eventType);
 
             if (targets.isEmpty()) {
                 log.debug("No webhook target was found, skipping the event: {}", eventType);

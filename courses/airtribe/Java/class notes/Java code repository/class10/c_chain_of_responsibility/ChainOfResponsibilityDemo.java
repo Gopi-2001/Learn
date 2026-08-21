@@ -131,4 +131,6 @@ public class ChainOfResponsibilityDemo {
         System.out.println("  Sender doesn't know WHO handles the request.");
         System.out.println("  Handlers are decoupled — add/remove without changing others.");
     }
+
 }
+

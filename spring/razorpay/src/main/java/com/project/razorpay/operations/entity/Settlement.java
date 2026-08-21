@@ -4,6 +4,7 @@ import com.project.razorpay.common.entity.BaseEntity;
 import com.project.razorpay.common.entity.Money;
 import com.project.razorpay.common.enums.SettlementStatus;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,6 +14,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "settlement")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Settlement  extends BaseEntity {
 
     @Id
@@ -37,6 +43,13 @@ public class Settlement  extends BaseEntity {
 
     @Embedded
     @AttributeOverrides({
+            @AttributeOverride(name = "amountUnits", column = @Column(name = "fee_amount_units", nullable = false)),
+            @AttributeOverride(name = "currency", column = @Column(name = "fee_amount_currency", nullable = false)),
+    })
+    private Money feeAmount;
+
+    @Embedded
+    @AttributeOverrides({
             @AttributeOverride(name = "amountUnits", column = @Column(name = "gst_amount_units", nullable = false)),
             @AttributeOverride(name = "currency", column = @Column(name = "gst_amount_currency", nullable = false)),
     })
@@ -54,5 +67,7 @@ public class Settlement  extends BaseEntity {
     private String bankReference;
 
     private LocalDateTime processedAt;
+
+    private String failureReason;
 
 }

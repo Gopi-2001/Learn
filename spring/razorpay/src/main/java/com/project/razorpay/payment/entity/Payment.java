@@ -74,4 +74,6 @@ public class Payment  extends BaseEntity {
 
     private LocalDateTime refundedAt;
 
+    private LocalDateTime settledAt;
+
 }
