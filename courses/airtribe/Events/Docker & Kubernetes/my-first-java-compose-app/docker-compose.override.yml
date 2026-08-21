@@ -1,0 +1,25 @@
+# docker-compose.override.yml — development overrides
+# Auto-loaded by: docker compose up  (no --file flag needed)
+# Only active in development — NOT loaded in production
+
+services:
+  api:
+    # In dev: mount source code so you can rebuild without docker build
+    # (In Java, you still need to rebuild the JAR, but this shows the pattern)
+    volumes:
+      - ./src:/build/src:ro
+    environment:
+      # Enable Spring Boot dev tools behavior via active profile
+      SPRING_PROFILES_ACTIVE: dev
+      # Show SQL queries in logs (useful for debugging)
+      SPRING_JPA_SHOW_SQL: "true"
+
+  db:
+    # Expose Postgres directly so you can connect with DBeaver or pgAdmin
+    ports:
+      - "5432:5432"
+
+  redis:
+    # Expose Redis so you can inspect with redis-cli or RedisInsight
+    ports:
+      - "6379:6379"

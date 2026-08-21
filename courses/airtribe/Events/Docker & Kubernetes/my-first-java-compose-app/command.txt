@@ -1,0 +1,56 @@
+# Docker Compose — Java Edition Commands
+# Run from: c:\Learn\copilot\my-first-java-compose-app\
+
+# ── Start everything ──────────────────────────────────────────────────────
+docker compose up -d
+# Builds the Java image (Stage 1: Maven compile → Stage 2: JRE only)
+# Then starts: PostgreSQL → Redis → Spring Boot API → Nginx
+
+# NOTE: First run takes 2-4 minutes — Maven downloads all dependencies.
+#       Subsequent builds are fast because of layer caching.
+
+# ── Wait for Spring Boot to be ready (it's slower than Node.js) ──────────
+docker compose logs -f api
+# Watch for: "Started ComposeApp in X.XXX seconds"
+
+# ── Test the app ──────────────────────────────────────────────────────────
+# Through Nginx (port 8080 on host → port 80 on Nginx → port 8080 on API):
+curl http://localhost:8080/
+curl http://localhost:8080/           # 2nd call → served from Redis cache!
+curl http://localhost:8080/visits     # all recorded visits
+curl http://localhost:8080/health     # simple OK
+
+# Direct to API (ports exposed in docker-compose.override.yml dev mode):
+# (not available by default, only in dev with override file)
+
+# ── Check service health ──────────────────────────────────────────────────
+docker compose ps
+docker compose logs db
+docker compose logs redis
+docker compose logs api
+docker compose logs nginx
+
+# ── Rebuild after code changes ────────────────────────────────────────────
+docker compose build api
+docker compose up -d api        # restart only the api service
+
+# ── Connect to PostgreSQL directly (dev mode with override) ───────────────
+# Install psql or use DBeaver: host=localhost, port=5432, db=appdb, user=appuser
+# docker exec -it javaapp-db psql -U appuser -d appdb
+# SELECT * FROM visits;
+
+# ── Connect to Redis directly (dev mode with override) ───────────────────
+# docker exec -it javaapp-redis redis-cli
+# KEYS *
+# GET "visits:/"
+
+# ── Scale the API (run 3 instances) ──────────────────────────────────────
+# (Remove container_name from api service first, then:)
+# docker compose up -d --scale api=3
+
+# ── Stop everything ───────────────────────────────────────────────────────
+docker compose down
+docker compose down -v    # also delete named volumes (wipes DB data)
+
+# ── Production mode ───────────────────────────────────────────────────────
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d

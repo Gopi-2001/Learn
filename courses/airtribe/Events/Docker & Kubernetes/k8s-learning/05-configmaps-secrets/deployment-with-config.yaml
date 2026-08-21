@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: hello-java
+  labels:
+    app: hello-java
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-java
+
+  template:
+    metadata:
+      labels:
+        app: hello-java
+
+    spec:
+      containers:
+        - name: hello-java-container
+          image: hello-java:1.0.0
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8080
+
+          # ── Method 2: inject specific keys by name ──────────────────────
+          # This is explicit and clear — you see exactly which config is used
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: PORT
+
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: DB_HOST
+
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: DB_PORT
+
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: DB_NAME
+
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: DB_USER
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:        # ← from Secret, not ConfigMap
+                  name: java-app-secret
+                  key: DB_PASSWORD
+
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: REDIS_HOST
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: java-app-config
+                  key: SPRING_PROFILES_ACTIVE
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

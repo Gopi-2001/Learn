@@ -1,0 +1,22 @@
+# docker-compose.prod.yml — production overrides
+# Run with: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  api:
+    # In prod: use a pre-built image from a registry instead of building locally
+    image: your-registry/java-compose-api:${IMAGE_TAG:-latest}
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      # Do NOT log SQL in production
+      SPRING_JPA_SHOW_SQL: "false"
+
+  nginx:
+    # In prod you'd add TLS/SSL config here
+    ports:
+      - "80:80"
+      - "443:443"

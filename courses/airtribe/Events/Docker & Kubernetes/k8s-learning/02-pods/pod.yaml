@@ -1,0 +1,41 @@
+apiVersion: v1        # API group for Pods
+kind: Pod             # resource type
+
+metadata:
+  name: hello-pod     # unique name in this namespace
+  labels:
+    app: hello-java   # labels are key=value tags — used by Services to find Pods
+
+spec:
+  containers:
+    - name: hello-java-container   # name of the container inside the pod
+      image: hello-java:1.0.0      # same image you built with 'docker build'
+      
+      # imagePullPolicy: Never means "use the locally loaded image, never pull from Docker Hub"
+      # Required when using 'minikube image load' for local images
+      imagePullPolicy: Never
+      
+      ports:
+        - containerPort: 8080    # the port your Spring Boot app listens on
+
+      # Environment variables (same as 'environment:' in docker-compose.yml)
+      env:
+        - name: PORT
+          value: "8080"
+
+      # Liveness probe: K8s kills the container if this fails (assumes app is hung)
+      livenessProbe:
+        httpGet:
+          path: /actuator/health  # Spring Boot Actuator endpoint
+          port: 8080
+        initialDelaySeconds: 30   # wait 30s before first check (Spring Boot startup)
+        periodSeconds: 10
+        failureThreshold: 3
+
+      # Readiness probe: K8s stops sending traffic if this fails (but keeps container alive)
+      readinessProbe:
+        httpGet:
+          path: /actuator/health
+          port: 8080
+        initialDelaySeconds: 20
+        periodSeconds: 5

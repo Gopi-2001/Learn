@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: javaapp-ingress
+  namespace: javaapp
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: javaapp.local    # add "<minikube-ip> javaapp.local" to your hosts file
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: java-api-service
+                port:
+                  number: 8080

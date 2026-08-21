@@ -1,0 +1,48 @@
+# 1. Go into your folder
+cd my-first-docker-app
+
+# 2. Build the image (-t gives it a name)
+docker build -t my-first-app .
+
+# 3. See your image
+docker images
+
+# 4. Run it! (-p maps port, -d runs in background)
+docker run -d -p 8080:3000 --name my-container my-first-app
+
+# 5. Test it!
+curl http://localhost:8080
+# Output: Hello from Docker! 🐳
+
+	# a. Enter the container
+	docker exec -it my-container sh
+	
+			------------
+			docker exec        → run a command inside an ALREADY running container
+			-it                → two flags combined
+			  -i               → interactive  (keep input open — so you can type)
+			  -t               → tty          (give me a terminal — so it looks like a real shell)
+			my-container       → name of the container to go inside
+			sh                 → the command to run inside (open a shell)
+			------------
+			
+	# b. Now you're inside — prompt changes to:
+	/app $
+
+	# c. Test the app from inside
+	/app $ wget -qO- http://localhost:3000
+	Hello from Docker! 🐳
+
+	# d. Exit the container (back to your PC)
+	/app $ exit
+	$
+
+# 6. Check health status
+docker ps
+
+# 7. See logs
+docker logs my-container
+
+# 8. Stop and clean up
+docker stop my-container
+docker rm my-container

@@ -1,0 +1,32 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+
+metadata:
+  name: hello-java-hpa
+
+spec:
+  # HPA watches this Deployment and adjusts its replica count
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hello-java
+
+  minReplicas: 2     # always keep at least 2 pods (high availability)
+  maxReplicas: 10    # never exceed 10 pods
+
+  metrics:
+    # Scale based on CPU usage
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilizationPercentage: 50    # scale up when avg CPU > 50%
+
+    # Scale based on Memory usage (optional — comment out if not needed)
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilizationPercentage: 70    # scale up when avg memory > 70%

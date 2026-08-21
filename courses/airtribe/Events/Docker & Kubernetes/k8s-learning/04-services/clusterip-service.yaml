@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: hello-java-cluster
+  labels:
+    app: hello-java
+
+spec:
+  type: ClusterIP    # default — only reachable from inside the cluster
+
+  # Route traffic to any Pod with label app=hello-java
+  selector:
+    app: hello-java
+
+  ports:
+    - protocol: TCP
+      port: 8080        # the port this Service listens on (inside the cluster)
+      targetPort: 8080  # the port on the Pod (containerPort in deployment.yaml)

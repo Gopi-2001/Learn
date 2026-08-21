@@ -1,0 +1,168 @@
+# Docker + Java (Spring Boot) Notes
+## How this compares to your JavaScript Dockerfile
+
+---
+
+## Side-by-Side Comparison
+
+| Concept | JavaScript (your old app) | Java / Spring Boot (this app) |
+|---|---|---|
+| **Runtime** | Node.js | JVM (Java Virtual Machine) |
+| **Package manager** | npm | Maven (pom.xml) |
+| **Dependency file** | package.json | pom.xml |
+| **Install deps** | `npm install` | `mvn dependency:go-offline` |
+| **Build/Start** | `node server.js` | `java -jar app.jar` |
+| **Compilation step?** | ❌ No (JS is interpreted) | ✅ Yes (Java → bytecode → JAR) |
+| **Multi-stage build?** | Optional | **Essential** — separates compile from run |
+| **Port** | 3000 | 8080 |
+| **Health check URL** | `/health` (manual) | `/actuator/health` (auto by Spring Boot) |
+
+---
+
+## Why Java Needs Multi-Stage Builds
+
+```
+JS Dockerfile (single stage):
+┌──────────────────────────────────┐
+│ FROM node:20-alpine              │  One image = build + run
+│ COPY package.json .              │
+│ RUN npm install                  │
+│ COPY server.js .                 │
+│ CMD ["node", "server.js"]        │
+└──────────────────────────────────┘
+
+Java Dockerfile (multi-stage):
+┌──────────────────────────────────┐
+│ FROM maven:3.9-...  AS builder   │  Stage 1: JDK + Maven
+│ COPY pom.xml .                   │            ↓ compile
+│ RUN mvn dependency:go-offline    │            ↓ package
+│ COPY src ./src                   │       → hello-docker.jar
+│ RUN mvn package -DskipTests      │
+└──────────────────────────────────┘
+              │  COPY --from=builder *.jar
+              ▼
+┌──────────────────────────────────┐
+│ FROM eclipse-temurin:21-jre-...  │  Stage 2: JRE only (no compiler)
+│ COPY --from=builder *.jar app.jar│            ↓
+│ ENTRYPOINT ["java", "-jar", ...] │       container runs app.jar
+└──────────────────────────────────┘
+```
+
+**Benefits of multi-stage:**
+- Final image has **no JDK, no Maven, no source code** — much smaller
+- JRE image ≈ 200 MB vs builder image ≈ 700 MB
+- Source code never ships to production (security)
+- Attack surface is minimized
+
+---
+
+## Layer Caching — The Key Trick
+
+The same caching trick you used in JS works in Java:
+
+```dockerfile
+# JS version (package.json first):
+COPY package.json .
+RUN npm install        ← cached as long as package.json doesn't change
+COPY server.js .       ← only this layer rebuilds when code changes
+
+# Java version (pom.xml first):
+COPY pom.xml .
+RUN mvn dependency:go-offline   ← cached as long as pom.xml doesn't change
+COPY src ./src                  ← only this layer rebuilds when code changes
+RUN mvn package -DskipTests
+```
+
+Without this trick, every code change would re-download all Maven dependencies (hundreds of MB).
+
+---
+
+## Spring Boot Actuator — Free Health Checks
+
+In your JS app you wrote `if (url === '/health') { res.end('OK') }` manually.
+
+Spring Boot Actuator gives you this **for free** — just add the dependency:
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+This auto-exposes:
+- `GET /actuator/health` → `{"status":"UP"}`  
+- `GET /actuator/info` → app metadata
+- And many more endpoints
+
+In production, Kubernetes uses `/actuator/health` as the **liveness** and **readiness** probe.
+
+---
+
+## The Fat JAR
+
+`mvn package` creates a single file like:
+```
+target/hello-docker-1.0.0.jar   (≈ 20 MB)
+```
+
+This JAR contains:
+- Your compiled classes
+- **All dependencies** (Spring Boot, Tomcat, Jackson, etc.)
+- An embedded web server (Tomcat runs inside the JAR)
+
+You run it with just: `java -jar app.jar`  
+No separate server installation needed — Tomcat is embedded.
+
+---
+
+## Environment Variable Pattern
+
+```properties
+# application.properties
+server.port=${PORT:8080}
+#              ↑   ↑
+#              │   └── default value if PORT is not set
+#              └──── reads PORT env variable
+```
+
+```dockerfile
+ENV PORT=8080           # sets default inside container
+EXPOSE 8080             # documents the port (doesn't publish it)
+```
+
+```bash
+# Override when running:
+docker run -e PORT=9090 -p 9090:9090 hello-java:1.0.0
+```
+
+---
+
+## Image Size Comparison
+
+```bash
+docker images | grep hello
+
+# You'll see something like:
+# hello-java       1.0.0    abc123   220 MB   ← final image (JRE only)
+# <none>           <none>   def456   720 MB   ← discarded builder stage
+```
+
+The builder stage is automatically discarded by Docker — it's only used during `docker build`.
+
+---
+
+## Key Files
+
+| File | Purpose |
+|---|---|
+| `pom.xml` | Declares dependencies + build config (≈ package.json) |
+| `src/main/java/...` | Java source code |
+| `src/main/resources/application.properties` | App config (port, DB URL, etc.) |
+| `Dockerfile` | Multi-stage: Stage 1 = compile, Stage 2 = run |
+| `target/hello-docker-1.0.0.jar` | Built artifact (generated by `mvn package`) |
+
+---
+
+## What's Next?
+
+Now that you understand the Java Dockerfile, move to **my-first-java-compose-app** to see how the Java app connects to PostgreSQL and Redis using Docker Compose. Then head to **k8s-learning** to deploy it all on Kubernetes!

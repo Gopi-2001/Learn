@@ -1,0 +1,72 @@
+apiVersion: apps/v1    # Deployment is in the 'apps' API group
+kind: Deployment
+
+metadata:
+  name: hello-java
+  labels:
+    app: hello-java
+
+spec:
+  replicas: 3          # run 3 identical pods at all times
+
+  # selector tells the Deployment which Pods it manages
+  # Must match the labels in spec.template.metadata.labels
+  selector:
+    matchLabels:
+      app: hello-java
+
+  # Rolling update strategy (default)
+  # maxUnavailable=1 → at most 1 pod is down during update
+  # maxSurge=1       → at most 1 extra pod exists during update
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+
+  # Pod template — the Deployment copies this to create each Pod
+  template:
+    metadata:
+      labels:
+        app: hello-java   # MUST match selector.matchLabels above
+
+    spec:
+      containers:
+        - name: hello-java-container
+          image: hello-java:1.0.0
+          imagePullPolicy: Never      # use locally loaded image
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: PORT
+              value: "8080"
+
+          # Liveness: kill + restart container if app is stuck
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+
+          # Readiness: stop sending traffic if app isn't ready yet
+          # (e.g., during startup or warming up)
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 3
+
+          # Resource limits (Module 11 covers this in depth)
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
